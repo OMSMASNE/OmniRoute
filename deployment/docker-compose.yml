@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  load_balancer:
+    build:
+      context: ../
+      dockerfile: deployment/lb.dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - lb_network
+    depends_on:
+      - backend-1
+      - backend-2
+      - backend-3
+  
+  backend-1:
+    build:
+      context: ../
+      dockerfile: deployment/backend.dockerfile
+    environment:
+      - PORT=8081
+      - SERVER_NAME=backend-instance-1
+    networks:
+      - lb_network
+    
+  backend-2:
+    build:
+      context: ../
+      dockerfile: deployment/backend.dockerfile
+    environment:
+      - PORT=8081
+      - SERVER_NAME=backend-instance-2
+    networks:
+      - lb_network
+
+  backend-3:
+    build:
+      context: ../
+      dockerfile: deployment/backend.dockerfile
+    environment:
+      - PORT=8081
+      - SERVER_NAME=backend-instance-3
+    networks:
+      - lb_network
+
+networks:
+  lb_network:
+    driver: bridge
